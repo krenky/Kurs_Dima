@@ -3,19 +3,28 @@ using System.Collections;
 
 namespace Class_library
 {
-    public class ListOperation: IEnumerable
+    public class ListOperation : IEnumerable
     {
-        public Operation FirstOperation { get; private set; }
-        public int SumAmount { 
-            get 
+        private Operation firstOperation;
+
+        public ListOperation()
+        {
+            this.firstOperation = null;
+        }
+
+        public Operation FirstOperation { get => firstOperation; private set => firstOperation = value; }
+        public int SumAmount
+        {
+            get
             {
                 var sum = 0;
-                foreach (Operation item in GetEnumeratorAmounts())
+                foreach (Operation item in GetEnumerator())
                 {
                     sum += item.Amount;
                 }
                 return sum;
-            } }
+            }
+        }
         /// <summary>
         /// Метод добавления операции
         /// </summary>
@@ -50,10 +59,18 @@ namespace Class_library
             var newOperation = new Operation(amount);
             var current = GetOperation(operatiomId);
 
-            if(current != null)
+            if (FirstOperation == null)
+            {
+                FirstOperation = newOperation;
+                FirstOperation.Next = FirstOperation;
+                FirstOperation.Previous = FirstOperation;
+                return true;
+            }
+
+            if (current != null)
             {
                 newOperation.Next = current;
-                newOperation.Previous = current;
+                newOperation.Previous = current.Previous;
                 current.Previous.Next = newOperation;
                 current.Previous = newOperation;
                 return true;
@@ -61,6 +78,29 @@ namespace Class_library
             return false;
         }
 
+        public bool AddAfterOperation(int amount, int operatiomId)
+        {
+            var newOperation = new Operation(amount);
+            var current = GetOperation(operatiomId);
+
+            if (FirstOperation == null)
+            {
+                FirstOperation = newOperation;
+                FirstOperation.Next = FirstOperation;
+                FirstOperation.Previous = FirstOperation;
+                return true;
+            }
+
+            if (current != null)
+            {
+                newOperation.Next = current.Next;
+                newOperation.Previous = current;
+                current.Next.Previous = newOperation;
+                current.Next = newOperation;
+                return true;
+            }
+            return false;
+        }
 
         public bool ChangeOperation(int operationId, int amount)
         {
@@ -105,20 +145,6 @@ namespace Class_library
                 if (currentOperation != null)
                 {
                     yield return currentOperation;
-                    currentOperation = currentOperation.Next;
-                }
-            }
-            while (currentOperation != FirstOperation);
-        }
-
-        public IEnumerable GetEnumeratorAmounts()
-        {
-            var currentOperation = FirstOperation;
-            do
-            {
-                if (currentOperation != null)
-                {
-                    yield return currentOperation.Amount;
                     currentOperation = currentOperation.Next;
                 }
             }
