@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Class_library
 {
-    public class ListOperation : IEnumerable
+    public class ListOperation : IEnumerable<Operation>
     {
         private Operation firstOperation;
 
@@ -18,7 +20,9 @@ namespace Class_library
             get
             {
                 var sum = 0;
-                foreach (Operation item in GetEnumerator())
+                if (firstOperation == null)
+                    return sum;
+                foreach (Operation item in this.ToList())
                 {
                     sum += item.Amount;
                 }
@@ -135,9 +139,18 @@ namespace Class_library
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IEnumerable)this).GetEnumerator();
+            var currentOperation = FirstOperation;
+            do
+            {
+                if (currentOperation != null)
+                {
+                    yield return currentOperation;
+                    currentOperation = currentOperation.Next;
+                }
+            }
+            while (currentOperation != FirstOperation);
         }
-        public IEnumerable GetEnumerator()
+        public IEnumerator<Operation> GetEnumerator()
         {
             var currentOperation = FirstOperation;
             do

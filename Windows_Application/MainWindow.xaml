@@ -24,12 +24,20 @@
                 <DataGridTextColumn Header="Sum Amount" Binding="{Binding Path=SumAmount}" Width="3*" />
             </DataGrid.Columns>
         </DataGrid>
-        <DataGrid x:Name="OperationGrid" Grid.Column="2" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <DataGrid x:Name="OperationGrid" Grid.Column="2" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Id" Binding="{Binding Path=OperationId}" Width="1*" />
+                <DataGridHyperlinkColumn Header="Amount" Binding="{Binding Path=Amount}" Width="3*" />
+                <DataGridTextColumn Header="Date" Binding="{Binding Path=DateOperation}" Width="3*" />
+            </DataGrid.Columns>
+        </DataGrid>
         <Button x:Name="AddClient" Content="Add" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="AddClient_Click"/>
         <Button x:Name="DeleteClient" Content="Del" HorizontalAlignment="Left" Margin="41,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="DeleteClient_Click"/>
         <TextBox x:Name="NameClient_TextBox" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Name" VerticalAlignment="Top" Width="120"/>
-        <Button x:Name="AddOperation" Grid.Column="2" Content="Add" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top"/>
-        <Button x:Name="ChangeOperation" Grid.Column="2" Content="Change" HorizontalAlignment="Left" Margin="41,10,0,0" Grid.Row="2" VerticalAlignment="Top"/>
+        <Button x:Name="AddOperation" Grid.Column="2" Content="Add" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="AddOperation_Click"/>
+        <Button x:Name="ChangeOperation" Grid.Column="2" Content="Change" HorizontalAlignment="Left" Margin="41,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="ChangeOperation_Click"/>
         <TextBox x:Name="Amount_TextBox" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Amount" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="AddBeforeOperation" Grid.Column="2" Content="Add before" HorizontalAlignment="Left" Margin="10,35,0,0" Grid.Row="2" VerticalAlignment="Top" Click="AddBeforeOperation_Click"/>
+        <Button x:Name="AddAfterOperation" Grid.Column="2" Content="Add after" HorizontalAlignment="Left" Margin="79,35,0,0" Grid.Row="2" VerticalAlignment="Top"/>
     </Grid>
 </Window>

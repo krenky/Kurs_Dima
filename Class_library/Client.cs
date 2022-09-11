@@ -11,6 +11,7 @@
             Name = name;
             ClientId = lastId;
             lastId++;
+            Operations = new ListOperation();
         }
 
         public ListOperation Operations { get; set; }
