@@ -7,11 +7,16 @@ using System.Text.Json.Serialization;
 
 namespace Class_library
 {
+    /// <summary>
+    /// Класс списка операций
+    /// </summary>
     public class ListOperation : IEnumerable<Operation>
     {
         private Operation firstOperation;
         private ObservableCollection<Operation> operations;
-
+        /// <summary>
+        /// контсруктор
+        /// </summary>
         public ListOperation()
         {
             this.firstOperation = null;
@@ -19,6 +24,10 @@ namespace Class_library
         }
 
         private Operation FirstOperation { get => firstOperation; set => firstOperation = value; }
+        /// <summary>
+        /// Список операций
+        /// !!!Для привязки к гриду!!!
+        /// </summary>
         public ObservableCollection<Operation> Operations { get => operations; 
             set 
             { 
@@ -31,6 +40,9 @@ namespace Class_library
                 }
             } 
         }
+        /// <summary>
+        /// Сумма операция клиента
+        /// </summary>
         [JsonIgnore]
         public int SumAmount
         {
@@ -112,7 +124,12 @@ namespace Class_library
                 return false;
             }
         }
-
+        /// <summary>
+        /// Добавить до операции
+        /// </summary>
+        /// <param name="amount">Сумма</param>
+        /// <param name="operatiomId">Id операции до которой надо добавить</param>
+        /// <returns>True - успешное добавление, False - неуспешное</returns>
         public bool AddBeforeOperation(int amount, int operatiomId)
         {
             var newOperation = new Operation(amount);
@@ -138,7 +155,12 @@ namespace Class_library
             }
             return false;
         }
-
+        /// <summary>
+        /// Добавить после операции
+        /// </summary>
+        /// <param name="amount">Сумма</param>
+        /// <param name="operatiomId">Id операции после которой надо добавить</param>
+        /// <returns>True - успешное добавление, False - неуспешное</returns>
         public bool AddAfterOperation(int amount, int operatiomId)
         {
             var newOperation = new Operation(amount);
@@ -164,7 +186,12 @@ namespace Class_library
             }
             return false;
         }
-
+        /// <summary>
+        /// Изменить сумму операции
+        /// </summary>
+        /// <param name="operationId">Id операции которую надо изменить</param>
+        /// <param name="amount">Сумма</param>
+        /// <returns>True - Успешное изменение, False - операция не найдена</returns>
         public bool ChangeOperation(int operationId, int amount)
         {
             var currentOperation = firstOperation;
@@ -180,7 +207,11 @@ namespace Class_library
             } while (currentOperation != firstOperation);
             return false;
         }
-
+        /// <summary>
+        /// Получить операцию
+        /// </summary>
+        /// <param name="operationId">Id операции</param>
+        /// <returns></returns>
         private Operation GetOperation(int operationId)
         {
             var currentOperation = firstOperation;
@@ -196,7 +227,10 @@ namespace Class_library
             } while (currentOperation != firstOperation);
             return null;
         }
-
+        /// <summary>
+        /// реализация интерфейса ienumerator
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             var currentOperation = firstOperation;
@@ -210,6 +244,10 @@ namespace Class_library
             }
             while (currentOperation != firstOperation);
         }
+        /// <summary>
+        /// реализация интерфейса ienumerator
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<Operation> GetEnumerator()
         {
             var currentOperation = firstOperation;

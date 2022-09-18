@@ -11,10 +11,16 @@ using System.Threading.Tasks;
 
 namespace Class_library
 {
+    /// <summary>
+    /// Класс очереди клиентов
+    /// </summary>
     public class QueueClient : IEnumerable<Client>, INotifyPropertyChanged
     {
         private Client[] clients;
-
+        /// <summary>
+        /// Контсрукор
+        /// </summary>
+        /// <param name="maxClient">Максимальное кол-во клиентов</param>
         public QueueClient(int maxClient)
         {
             Clients = new Client[maxClient];
@@ -22,7 +28,9 @@ namespace Class_library
             this.lastClient = -1;
             CountClient = 0;
         }
-
+        /// <summary>
+        /// Массив кленов
+        /// </summary>
         public Client[] Clients { get => clients; 
             set 
             { 
@@ -32,8 +40,15 @@ namespace Class_library
         }
         private int firstClient { get; set; }
         private int lastClient { get; set; }
+        /// <summary>
+        /// Кол-во клиентов
+        /// </summary>
         public int CountClient { get; set; }
-
+        /// <summary>
+        /// Добавление клиента
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public bool AddClient(string name)
         {
             var newClient = new Client(name);
@@ -61,7 +76,12 @@ namespace Class_library
                 return true;
             }
         }
-
+        /// <summary>
+        /// Добавление клентов
+        /// !!!Для дессериализации!!!
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         private bool AddClient(Client client)
         {
             var newClient = client;
@@ -95,7 +115,10 @@ namespace Class_library
                 return true;
             }
         }
-
+        /// <summary>
+        /// Удаление клиента из очереди
+        /// </summary>
+        /// <returns></returns>
         public bool Delete()
         {
             if (CountClient == 0)
@@ -111,12 +134,20 @@ namespace Class_library
             CountClient--;
             return true;
         }
-
+        /// <summary>
+        /// Сохранение структуры 
+        /// </summary>
+        /// <param name="fileStream"></param>
         public void Save(FileStream fileStream)
         {
             
             JsonSerializer.Serialize<Client[]>(new Utf8JsonWriter(fileStream), clients);
         }
+        /// <summary>
+        /// Загрузка структуры
+        /// </summary>
+        /// <param name="fileStream"></param>
+        /// <returns></returns>
         public async Task<bool> Load(FileStream fileStream)
         {
             Client[] Clients = await JsonSerializer.DeserializeAsync<Client[]>(fileStream);
@@ -144,7 +175,10 @@ namespace Class_library
         {
             return lastClient;
         }
-
+        /// <summary>
+        /// Реализация интрфейса ienumeratr
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<Client> GetEnumerator()
         {
             foreach (var client in clients)
@@ -166,7 +200,14 @@ namespace Class_library
                 }
             }
         }
+        /// <summary>
+        /// Событие изменения объекта
+        /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+        /// <summary>
+        /// Метод вызова события
+        /// </summary>
+        /// <param name="prop"></param>
         public void OnPropertyChanged([CallerMemberName] string prop = "")
         {
             if (PropertyChanged != null)
