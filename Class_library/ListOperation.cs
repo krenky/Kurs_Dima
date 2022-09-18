@@ -22,9 +22,10 @@ namespace Class_library
         public ObservableCollection<Operation> Operations { get => operations; 
             set 
             { 
-                operations = (ObservableCollection<Operation>)value.Where(x=>x!=null); 
+                var list = new ObservableCollection<Operation>(value.Where(x => x != null));
+                //operations = list; 
                 firstOperation = null;
-                foreach(var operation in operations)
+                foreach(var operation in list)
                 {
                     AddOperation(operation);
                 }
@@ -67,6 +68,8 @@ namespace Class_library
                 newOperation.Previous = firstOperation.Previous;
                 firstOperation.Previous.Next = newOperation;
                 firstOperation.Previous = newOperation;
+                if (operations == null)
+                    operations = new ObservableCollection<Operation>();
                 operations.Add(newOperation);
                 return true;
             }
@@ -99,6 +102,8 @@ namespace Class_library
                 newOperation.Previous = firstOperation.Previous;
                 firstOperation.Previous.Next = newOperation;
                 firstOperation.Previous = newOperation;
+                if (operations == null)
+                    operations = new ObservableCollection<Operation>();
                 operations.Add(newOperation);
                 return true;
             }
@@ -128,7 +133,7 @@ namespace Class_library
                 newOperation.Previous = current.Previous;
                 current.Previous.Next = newOperation;
                 current.Previous = newOperation;
-                operations = GetEnumerator() as ObservableCollection<Operation>;
+                operations = new ObservableCollection<Operation>(this);
                 return true;
             }
             return false;
@@ -144,7 +149,7 @@ namespace Class_library
                 firstOperation = newOperation;
                 firstOperation.Next = firstOperation;
                 firstOperation.Previous = firstOperation;
-                operations = GetEnumerator() as ObservableCollection<Operation>;
+                operations = new ObservableCollection<Operation>(this);
                 return true;
             }
 
@@ -154,7 +159,7 @@ namespace Class_library
                 newOperation.Previous = current;
                 current.Next.Previous = newOperation;
                 current.Next = newOperation;
-                operations = GetEnumerator() as ObservableCollection<Operation>;
+                operations = new ObservableCollection<Operation>(this);
                 return true;
             }
             return false;

@@ -6,6 +6,8 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using System.Text.Json;
 using Microsoft.Win32;
+using System;
+using System.Threading.Tasks;
 
 namespace Class_library
 {
@@ -115,13 +117,14 @@ namespace Class_library
             
             JsonSerializer.Serialize<Client[]>(new Utf8JsonWriter(fileStream), clients);
         }
-        public async void Load(FileStream fileStream)
+        public async Task<bool> Load(FileStream fileStream)
         {
             Client[] Clients = await JsonSerializer.DeserializeAsync<Client[]>(fileStream);
-            foreach(var client in Clients)
+            foreach(var client in Clients.Where(x => x != null))
             {
                 AddClient(client);
             }
+            return true;
         }
 
         /// <summary>

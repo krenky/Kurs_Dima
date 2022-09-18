@@ -47,7 +47,7 @@ namespace Windows_Application
                 OperationGrid.ItemsSource = client.Operations.Operations;
             }
             OperationGrid.Items.Refresh();
-            bindOperation(client);
+            //bindOperation(client);
         }
 
         private void AddClient_Click(object sender, RoutedEventArgs e)
@@ -99,14 +99,16 @@ namespace Windows_Application
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
             client.Operations.AddOperation(amount);
-            bindOperation(client);
+            //bindOperation(client);
             ClientsGrid.Items.Refresh();
         }
 
         private void ChangeOperation_Click(object sender, RoutedEventArgs e)
         {
             var operation = OperationGrid.SelectedItem as Operation;
-            operation = operations.Where(x => x.OperationId == operation.OperationId).FirstOrDefault();
+            var client = ClientsGrid.SelectedItem as Client;
+            
+            operation = client.Operations.Where(x => x.OperationId == operation.OperationId).FirstOrDefault();
             operation.Amount = Convert.ToInt32(Amount_TextBox.Text);
             ClientsGrid.Items.Refresh();
             OperationGrid.Items.Refresh();
@@ -121,8 +123,10 @@ namespace Windows_Application
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
             client.Operations.AddBeforeOperation(amount, selectedOperation.OperationId);
-            bindOperation(client);
+            //bindOperation(client);
             ClientsGrid.Items.Refresh();
+            OperationGrid.ItemsSource = null;
+            OperationGrid.ItemsSource = client.Operations.Operations;
         }
 
         private void AddAfterOperation_Click(object sender, RoutedEventArgs e)
@@ -134,8 +138,10 @@ namespace Windows_Application
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
             client.Operations.AddAfterOperation(amount, selectedOperation.OperationId);
-            bindOperation(client);
+            //bindOperation(client);
             ClientsGrid.Items.Refresh();
+            OperationGrid.ItemsSource = null;
+            OperationGrid.ItemsSource = client.Operations.Operations;
         }
 
         private void Save_button_Click(object sender, RoutedEventArgs e)
@@ -148,14 +154,24 @@ namespace Windows_Application
                 }
         }
 
-        private void Load_button_Click(object sender, RoutedEventArgs e)
+        private async void Load_button_Click(object sender, RoutedEventArgs e)
         {
+            operations.Clear();
+            clients.Clear();
+            queueClient = new QueueClient(10);
             OpenFileDialog openFileDialog = new OpenFileDialog();
             if ((bool)openFileDialog.ShowDialog())
                 using (FileStream fs = (FileStream)openFileDialog.OpenFile())
                 {
-                    queueClient.Load(fs);
+                    await queueClient.Load(fs);
                 }
+            foreach(var client in queueClient)
+            {
+                clients.Add(client);
+            }
+            ClientsGrid.ItemsSource = null;
+            ClientsGrid.ItemsSource = clients;
+            ClientsGrid.Items.Refresh();
         }
     }
 }
