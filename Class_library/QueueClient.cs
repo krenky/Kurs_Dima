@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.IO;
+using System.Text.Json;
+using Microsoft.Win32;
 
 namespace Class_library
 {
@@ -57,6 +60,40 @@ namespace Class_library
             }
         }
 
+        private bool AddClient(Client client)
+        {
+            var newClient = client;
+
+            Clients = new Client[Clients.Length];
+            this.firstClient = -1;
+            this.lastClient = -1;
+            CountClient = 0;
+
+            if (CountClient == 0)
+            {
+                firstClient = (firstClient + 1) % Clients.Length;
+                lastClient = firstClient;
+                Clients[lastClient] = newClient;
+                CountClient++;
+                return true;
+            }
+            lastClient = (lastClient + 1) % Clients.Length;
+            if (lastClient == firstClient)
+                firstClient = (firstClient + 1) % Clients.Length;
+
+            if (CountClient == Clients.Length)
+            {
+                Clients[lastClient] = newClient;
+                return true;
+            }
+            else
+            {
+                Clients[lastClient] = newClient;
+                CountClient++;
+                return true;
+            }
+        }
+
         public bool Delete()
         {
             if (CountClient == 0)
@@ -71,6 +108,20 @@ namespace Class_library
             }
             CountClient--;
             return true;
+        }
+
+        public void Save(FileStream fileStream)
+        {
+            
+            JsonSerializer.Serialize<Client[]>(new Utf8JsonWriter(fileStream), clients);
+        }
+        public async void Load(FileStream fileStream)
+        {
+            Client[] Clients = await JsonSerializer.DeserializeAsync<Client[]>(fileStream);
+            foreach(var client in Clients)
+            {
+                AddClient(client);
+            }
         }
 
         /// <summary>

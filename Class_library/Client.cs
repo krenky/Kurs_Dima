@@ -1,4 +1,7 @@
-﻿namespace Class_library
+﻿using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
+
+namespace Class_library
 {
     public class Client
     {
@@ -14,7 +17,21 @@
             Operations = new ListOperation();
         }
 
+        [JsonIgnore]
         public ListOperation Operations { get; set; }
+
+        public ObservableCollection<Operation> ArrayOperations
+        {
+            get
+            {
+                return this.Operations.Operations;
+            }
+            set
+            {
+                this.Operations.Operations = value;
+            }
+        }
+        [JsonIgnore]
         public int SumAmount { get => Operations == null ? 0 : Operations.SumAmount; }
     }
 }

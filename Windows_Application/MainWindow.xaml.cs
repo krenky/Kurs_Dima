@@ -1,7 +1,9 @@
 ﻿using Class_library;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,8 +40,13 @@ namespace Windows_Application
                 return;
 
             if(OperationGrid.ItemsSource == null)
-                OperationGrid.ItemsSource = operations;
-
+                OperationGrid.ItemsSource = client.Operations.Operations;
+            else
+            {
+                OperationGrid.ItemsSource = null;
+                OperationGrid.ItemsSource = client.Operations.Operations;
+            }
+            OperationGrid.Items.Refresh();
             bindOperation(client);
         }
 
@@ -116,6 +123,39 @@ namespace Windows_Application
             client.Operations.AddBeforeOperation(amount, selectedOperation.OperationId);
             bindOperation(client);
             ClientsGrid.Items.Refresh();
+        }
+
+        private void AddAfterOperation_Click(object sender, RoutedEventArgs e)
+        {
+            var client = ClientsGrid.SelectedItem as Client;
+            var selectedOperation = OperationGrid.SelectedItem as Operation;
+            if (client == null || selectedOperation == null)
+                return;
+            client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
+            int amount = Convert.ToInt32(Amount_TextBox.Text);
+            client.Operations.AddAfterOperation(amount, selectedOperation.OperationId);
+            bindOperation(client);
+            ClientsGrid.Items.Refresh();
+        }
+
+        private void Save_button_Click(object sender, RoutedEventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+            if ((bool)saveFileDialog.ShowDialog())
+                using (FileStream fs = (FileStream)saveFileDialog.OpenFile())
+                {
+                    queueClient.Save(fs);
+                }
+        }
+
+        private void Load_button_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if ((bool)openFileDialog.ShowDialog())
+                using (FileStream fs = (FileStream)openFileDialog.OpenFile())
+                {
+                    queueClient.Load(fs);
+                }
         }
     }
 }

@@ -1,20 +1,36 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Class_library
 {
     public class ListOperation : IEnumerable<Operation>
     {
         private Operation firstOperation;
+        private ObservableCollection<Operation> operations;
 
         public ListOperation()
         {
             this.firstOperation = null;
+            operations = new ObservableCollection<Operation>();
         }
 
-        public Operation FirstOperation { get => firstOperation; private set => firstOperation = value; }
+        private Operation FirstOperation { get => firstOperation; set => firstOperation = value; }
+        public ObservableCollection<Operation> Operations { get => operations; 
+            set 
+            { 
+                operations = (ObservableCollection<Operation>)value.Where(x=>x!=null); 
+                firstOperation = null;
+                foreach(var operation in operations)
+                {
+                    AddOperation(operation);
+                }
+            } 
+        }
+        [JsonIgnore]
         public int SumAmount
         {
             get
@@ -38,18 +54,52 @@ namespace Class_library
         {
             try
             {
-                if (FirstOperation == null)
+                if (firstOperation == null)
                 {
-                    FirstOperation = new Operation(amount);
-                    FirstOperation.Next = FirstOperation;
-                    FirstOperation.Previous = FirstOperation;
+                    firstOperation = new Operation(amount);
+                    firstOperation.Next = firstOperation;
+                    firstOperation.Previous = firstOperation;
+                    operations.Add(firstOperation);
                     return true;
                 }
                 var newOperation = new Operation(amount);
-                newOperation.Next = FirstOperation;
-                newOperation.Previous = FirstOperation.Previous;
-                FirstOperation.Previous.Next = newOperation;
-                FirstOperation.Previous = newOperation;
+                newOperation.Next = firstOperation;
+                newOperation.Previous = firstOperation.Previous;
+                firstOperation.Previous.Next = newOperation;
+                firstOperation.Previous = newOperation;
+                operations.Add(newOperation);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Метод добавления операции
+        /// Для сериализации
+        /// </summary>
+        /// <param name="amount">Сумма</param>
+        /// <returns></returns>
+        public bool AddOperation(Operation operation)
+        {
+            try
+            {
+                if (firstOperation == null)
+                {
+                    firstOperation = new Operation(operation.OperationId, operation.DateOperation, operation.Amount);
+                    firstOperation.Next = firstOperation;
+                    firstOperation.Previous = firstOperation;
+                    operations.Add(firstOperation);
+                    return true;
+                }
+                var newOperation = new Operation(operation.OperationId, operation.DateOperation, operation.Amount);
+                newOperation.Next = firstOperation;
+                newOperation.Previous = firstOperation.Previous;
+                firstOperation.Previous.Next = newOperation;
+                firstOperation.Previous = newOperation;
+                operations.Add(newOperation);
                 return true;
             }
             catch (Exception ex)
@@ -63,11 +113,12 @@ namespace Class_library
             var newOperation = new Operation(amount);
             var current = GetOperation(operatiomId);
 
-            if (FirstOperation == null)
+            if (firstOperation == null)
             {
-                FirstOperation = newOperation;
-                FirstOperation.Next = FirstOperation;
-                FirstOperation.Previous = FirstOperation;
+                firstOperation = newOperation;
+                firstOperation.Next = firstOperation;
+                firstOperation.Previous = firstOperation;
+                operations = GetEnumerator() as ObservableCollection<Operation>;
                 return true;
             }
 
@@ -77,6 +128,7 @@ namespace Class_library
                 newOperation.Previous = current.Previous;
                 current.Previous.Next = newOperation;
                 current.Previous = newOperation;
+                operations = GetEnumerator() as ObservableCollection<Operation>;
                 return true;
             }
             return false;
@@ -87,11 +139,12 @@ namespace Class_library
             var newOperation = new Operation(amount);
             var current = GetOperation(operatiomId);
 
-            if (FirstOperation == null)
+            if (firstOperation == null)
             {
-                FirstOperation = newOperation;
-                FirstOperation.Next = FirstOperation;
-                FirstOperation.Previous = FirstOperation;
+                firstOperation = newOperation;
+                firstOperation.Next = firstOperation;
+                firstOperation.Previous = firstOperation;
+                operations = GetEnumerator() as ObservableCollection<Operation>;
                 return true;
             }
 
@@ -101,6 +154,7 @@ namespace Class_library
                 newOperation.Previous = current;
                 current.Next.Previous = newOperation;
                 current.Next = newOperation;
+                operations = GetEnumerator() as ObservableCollection<Operation>;
                 return true;
             }
             return false;
@@ -108,7 +162,7 @@ namespace Class_library
 
         public bool ChangeOperation(int operationId, int amount)
         {
-            var currentOperation = FirstOperation;
+            var currentOperation = firstOperation;
             if (currentOperation == null)
                 return false;
             do
@@ -118,13 +172,13 @@ namespace Class_library
                     currentOperation.Amount = amount;
                     return true;
                 }
-            } while (currentOperation != FirstOperation);
+            } while (currentOperation != firstOperation);
             return false;
         }
 
         private Operation GetOperation(int operationId)
         {
-            var currentOperation = FirstOperation;
+            var currentOperation = firstOperation;
             if (currentOperation == null)
                 return null;
             do
@@ -133,13 +187,14 @@ namespace Class_library
                 {
                     return currentOperation;
                 }
-            } while (currentOperation != FirstOperation);
+                currentOperation = currentOperation.Next;
+            } while (currentOperation != firstOperation);
             return null;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            var currentOperation = FirstOperation;
+            var currentOperation = firstOperation;
             do
             {
                 if (currentOperation != null)
@@ -148,11 +203,11 @@ namespace Class_library
                     currentOperation = currentOperation.Next;
                 }
             }
-            while (currentOperation != FirstOperation);
+            while (currentOperation != firstOperation);
         }
         public IEnumerator<Operation> GetEnumerator()
         {
-            var currentOperation = FirstOperation;
+            var currentOperation = firstOperation;
             do
             {
                 if (currentOperation != null)
@@ -161,7 +216,7 @@ namespace Class_library
                     currentOperation = currentOperation.Next;
                 }
             }
-            while (currentOperation != FirstOperation);
+            while (currentOperation != firstOperation);
         }
     }
 }
