@@ -86,10 +86,8 @@ namespace Class_library
         {
             var newClient = client;
 
-            Clients = new Client[Clients.Length];
-            this.firstClient = -1;
-            this.lastClient = -1;
-            CountClient = 0;
+            
+            
 
             if (CountClient == 0)
             {
@@ -151,7 +149,11 @@ namespace Class_library
         public async Task<bool> Load(FileStream fileStream)
         {
             Client[] Clients = await JsonSerializer.DeserializeAsync<Client[]>(fileStream);
-            foreach(var client in Clients.Where(x => x != null))
+            this.clients = new Client[Clients.Length];
+            this.firstClient = -1;
+            this.lastClient = -1;
+            CountClient = 0;
+            foreach (var client in Clients.Where(x => x != null))
             {
                 AddClient(client);
             }
