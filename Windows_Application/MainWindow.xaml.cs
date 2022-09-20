@@ -30,7 +30,6 @@ namespace Windows_Application
         public MainWindow()
         {
             InitializeComponent();
-            //ClientsGrid.ItemsSource = queueClient.Clients;
         }
 
         private void ClientsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -95,6 +94,7 @@ namespace Windows_Application
         {
             var client = ClientsGrid.SelectedItem as Client;
             if (client == null)
+                MessageBox.Show("Выберите пользователя");
                 return;
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
@@ -107,11 +107,17 @@ namespace Windows_Application
         {
             var operation = OperationGrid.SelectedItem as Operation;
             var client = ClientsGrid.SelectedItem as Client;
-            
-            operation = client.Operations.Where(x => x.OperationId == operation.OperationId).FirstOrDefault();
-            operation.Amount = Convert.ToInt32(Amount_TextBox.Text);
-            ClientsGrid.Items.Refresh();
-            OperationGrid.Items.Refresh();
+            try
+            {
+                operation = client.Operations.Where(x => x.OperationId == operation.OperationId).FirstOrDefault();
+                operation.Amount = Convert.ToInt32(Amount_TextBox.Text);
+                ClientsGrid.Items.Refresh();
+                OperationGrid.Items.Refresh();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Выберите операцию которую хотите изменить");
+            }
         }
 
         private void AddBeforeOperation_Click(object sender, RoutedEventArgs e)
@@ -119,6 +125,7 @@ namespace Windows_Application
             var client = ClientsGrid.SelectedItem as Client;
             var selectedOperation = OperationGrid.SelectedItem as Operation;
             if (client == null || selectedOperation == null)
+                MessageBox.Show("Выберите оперцию до перед которой хотите обавить новую оперцию");
                 return;
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
@@ -134,7 +141,8 @@ namespace Windows_Application
             var client = ClientsGrid.SelectedItem as Client;
             var selectedOperation = OperationGrid.SelectedItem as Operation;
             if (client == null || selectedOperation == null)
-                return;
+                MessageBox.Show("Выберите оперцию до после которой хотите обавить новую оперцию");
+            return;
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
             client.Operations.AddAfterOperation(amount, selectedOperation.OperationId);
@@ -152,6 +160,7 @@ namespace Windows_Application
                 {
                     queueClient.Save(fs);
                 }
+            MessageBox.Show("Сохранение успешно");
         }
 
         private async void Load_button_Click(object sender, RoutedEventArgs e)
@@ -172,6 +181,7 @@ namespace Windows_Application
             ClientsGrid.ItemsSource = null;
             ClientsGrid.ItemsSource = clients;
             ClientsGrid.Items.Refresh();
+            MessageBox.Show("Загрузка успешна");
         }
     }
 }
