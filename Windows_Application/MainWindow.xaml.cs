@@ -94,8 +94,10 @@ namespace Windows_Application
         {
             var client = ClientsGrid.SelectedItem as Client;
             if (client == null)
+            {
                 MessageBox.Show("Выберите пользователя");
                 return;
+            }
             client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
             int amount = Convert.ToInt32(Amount_TextBox.Text);
             client.Operations.AddOperation(amount);
