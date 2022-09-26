@@ -246,7 +246,7 @@ namespace Windows_Application
         /// <param name="e"></param>
         private void Amount_TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            e.Handled = !(Char.IsDigit(e.Text, 0));
+            e.Handled = !(Char.IsDigit(e.Text, 0) || e.Text[0] == '-');
         }
     }
 }
