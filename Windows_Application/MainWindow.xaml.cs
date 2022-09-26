@@ -92,17 +92,24 @@ namespace Windows_Application
 
         private void AddOperation_Click(object sender, RoutedEventArgs e)
         {
-            var client = ClientsGrid.SelectedItem as Client;
-            if (client == null)
+            try
             {
-                MessageBox.Show("Выберите пользователя");
-                return;
+                var client = ClientsGrid.SelectedItem as Client;
+                if (client == null)
+                {
+                    MessageBox.Show("Выберите пользователя");
+                    return;
+                }
+                client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
+                int amount = Convert.ToInt32(Amount_TextBox.Text);
+                client.Operations.AddOperation(amount);
+                //bindOperation(client);
+                ClientsGrid.Items.Refresh();
             }
-            client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
-            int amount = Convert.ToInt32(Amount_TextBox.Text);
-            client.Operations.AddOperation(amount);
-            //bindOperation(client);
-            ClientsGrid.Items.Refresh();
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void ChangeOperation_Click(object sender, RoutedEventArgs e)
@@ -124,34 +131,52 @@ namespace Windows_Application
 
         private void AddBeforeOperation_Click(object sender, RoutedEventArgs e)
         {
-            var client = ClientsGrid.SelectedItem as Client;
-            var selectedOperation = OperationGrid.SelectedItem as Operation;
-            if (client == null || selectedOperation == null)
-                MessageBox.Show("Выберите оперцию до перед которой хотите обавить новую оперцию");
-                return;
-            client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
-            int amount = Convert.ToInt32(Amount_TextBox.Text);
-            client.Operations.AddBeforeOperation(amount, selectedOperation.OperationId);
-            //bindOperation(client);
-            ClientsGrid.Items.Refresh();
-            OperationGrid.ItemsSource = null;
-            OperationGrid.ItemsSource = client.Operations.Operations;
+            try
+            {
+                var client = ClientsGrid.SelectedItem as Client;
+                var selectedOperation = OperationGrid.SelectedItem as Operation;
+                if (client == null || selectedOperation == null)
+                {
+                    MessageBox.Show("Выберите оперцию до перед которой хотите обавить новую оперцию");
+                    return;
+                }
+                client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
+                int amount = Convert.ToInt32(Amount_TextBox.Text);
+                client.Operations.AddBeforeOperation(amount, selectedOperation.OperationId);
+                //bindOperation(client);
+                ClientsGrid.Items.Refresh();
+                OperationGrid.ItemsSource = null;
+                OperationGrid.ItemsSource = client.Operations.Operations;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void AddAfterOperation_Click(object sender, RoutedEventArgs e)
         {
-            var client = ClientsGrid.SelectedItem as Client;
-            var selectedOperation = OperationGrid.SelectedItem as Operation;
-            if (client == null || selectedOperation == null)
-                MessageBox.Show("Выберите оперцию до после которой хотите обавить новую оперцию");
-            return;
-            client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
-            int amount = Convert.ToInt32(Amount_TextBox.Text);
-            client.Operations.AddAfterOperation(amount, selectedOperation.OperationId);
-            //bindOperation(client);
-            ClientsGrid.Items.Refresh();
-            OperationGrid.ItemsSource = null;
-            OperationGrid.ItemsSource = client.Operations.Operations;
+            try
+            {
+                var client = ClientsGrid.SelectedItem as Client;
+                var selectedOperation = OperationGrid.SelectedItem as Operation;
+                if (client == null || selectedOperation == null)
+                {
+                    MessageBox.Show("Выберите оперцию до после которой хотите обавить новую оперцию");
+                    return;
+                }
+                client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
+                int amount = Convert.ToInt32(Amount_TextBox.Text);
+                client.Operations.AddAfterOperation(amount, selectedOperation.OperationId);
+                //bindOperation(client);
+                ClientsGrid.Items.Refresh();
+                OperationGrid.ItemsSource = null;
+                OperationGrid.ItemsSource = client.Operations.Operations;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void Save_button_Click(object sender, RoutedEventArgs e)
