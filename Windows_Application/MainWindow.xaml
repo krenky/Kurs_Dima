@@ -37,8 +37,6 @@
         <Button x:Name="AddOperation" Grid.Column="2" Content="Add" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="AddOperation_Click"/>
         <Button x:Name="ChangeOperation" Grid.Column="2" Content="Change" HorizontalAlignment="Left" Margin="41,10,0,0" Grid.Row="2" VerticalAlignment="Top" Click="ChangeOperation_Click"/>
         <TextBox x:Name="Amount_TextBox" Grid.Column="2" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="1" TextWrapping="Wrap" Text="Amount" VerticalAlignment="Top" Width="120" PreviewKeyDown="Amount_TextBox_PreviewKeyDown" PreviewTextInput="Amount_TextBox_PreviewTextInput"/>
-        <Button x:Name="AddBeforeOperation" Grid.Column="2" Content="Add before" HorizontalAlignment="Left" Margin="10,35,0,0" Grid.Row="2" VerticalAlignment="Top" Click="AddBeforeOperation_Click"/>
-        <Button x:Name="AddAfterOperation" Grid.Column="2" Content="Add after" HorizontalAlignment="Left" Margin="79,35,0,0" Grid.Row="2" VerticalAlignment="Top" Click="AddAfterOperation_Click"/>
         <Button x:Name="Save_button" Content="Save" HorizontalAlignment="Center" Margin="0,9,0,0" VerticalAlignment="Top" Grid.Row="1" Click="Save_button_Click"/>
         <Button x:Name="Load_button" Content="Load" HorizontalAlignment="Left" Margin="196,9,0,0" Grid.Row="1" VerticalAlignment="Top" Click="Load_button_Click"/>
     </Grid>

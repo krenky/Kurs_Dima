@@ -31,7 +31,11 @@ namespace Windows_Application
         {
             InitializeComponent();
         }
-
+        /// <summary>
+        /// Обрабочик смены фокуса в таблице клиентов
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ClientsGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var client = ClientsGrid.SelectedItem as Client;
@@ -48,7 +52,11 @@ namespace Windows_Application
             OperationGrid.Items.Refresh();
             //bindOperation(client);
         }
-
+        /// <summary>
+        /// Обработчик нажатия кнопки добавления клиента
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddClient_Click(object sender, RoutedEventArgs e)
         {
             var name = NameClient_TextBox.Text;
@@ -67,7 +75,11 @@ namespace Windows_Application
             
 
         }
-
+        /// <summary>
+        /// Обработчик нажатия кнопки удаления клиента
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void DeleteClient_Click(object sender, RoutedEventArgs e)
         {
             queueClient.Delete();
@@ -78,18 +90,11 @@ namespace Windows_Application
                 clients.Add(client);
             }
         }
-
-        private void bindOperation(Client client)
-        {
-            operations.Clear();
-            client = clients.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
-            if(client.Operations != null)
-                foreach(var operation in client.Operations)
-                {
-                    operations.Add(operation);
-                }
-        }
-
+        /// <summary>
+        /// Обработчик нажатия кнопки добавления операции
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void AddOperation_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -111,15 +116,18 @@ namespace Windows_Application
                 MessageBox.Show(ex.Message);
             }
         }
-
+        /// <summary>
+        /// Обработчик нажатия кнопки изменения операции
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void ChangeOperation_Click(object sender, RoutedEventArgs e)
         {
             var operation = OperationGrid.SelectedItem as Operation;
             var client = ClientsGrid.SelectedItem as Client;
             try
             {
-                operation = client.Operations.Where(x => x.OperationId == operation.OperationId).FirstOrDefault();
-                operation.Amount = Convert.ToInt32(Amount_TextBox.Text);
+                client.Operations.ChangeOperation(operation.OperationId, Convert.ToInt32(Amount_TextBox.Text));
                 ClientsGrid.Items.Refresh();
                 OperationGrid.Items.Refresh();
             }
@@ -128,57 +136,11 @@ namespace Windows_Application
                 MessageBox.Show("Выберите операцию которую хотите изменить");
             }
         }
-
-        private void AddBeforeOperation_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var client = ClientsGrid.SelectedItem as Client;
-                var selectedOperation = OperationGrid.SelectedItem as Operation;
-                if (client == null || selectedOperation == null)
-                {
-                    MessageBox.Show("Выберите оперцию до перед которой хотите обавить новую оперцию");
-                    return;
-                }
-                client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
-                int amount = Convert.ToInt32(Amount_TextBox.Text);
-                client.Operations.AddBeforeOperation(amount, selectedOperation.OperationId);
-                //bindOperation(client);
-                ClientsGrid.Items.Refresh();
-                OperationGrid.ItemsSource = null;
-                OperationGrid.ItemsSource = client.Operations.Operations;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private void AddAfterOperation_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var client = ClientsGrid.SelectedItem as Client;
-                var selectedOperation = OperationGrid.SelectedItem as Operation;
-                if (client == null || selectedOperation == null)
-                {
-                    MessageBox.Show("Выберите оперцию до после которой хотите обавить новую оперцию");
-                    return;
-                }
-                client = queueClient.Where(x => x.ClientId == client.ClientId).FirstOrDefault();
-                int amount = Convert.ToInt32(Amount_TextBox.Text);
-                client.Operations.AddAfterOperation(amount, selectedOperation.OperationId);
-                //bindOperation(client);
-                ClientsGrid.Items.Refresh();
-                OperationGrid.ItemsSource = null;
-                OperationGrid.ItemsSource = client.Operations.Operations;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
+        /// <summary>
+        /// Обработчик нажатия кнопки сохранения
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Save_button_Click(object sender, RoutedEventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog();
@@ -189,7 +151,11 @@ namespace Windows_Application
                 }
             MessageBox.Show("Сохранение успешно");
         }
-
+        /// <summary>
+        /// Обработчик нажатия кнопки загрузки
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void Load_button_Click(object sender, RoutedEventArgs e)
         {
             operations.Clear();
@@ -211,7 +177,7 @@ namespace Windows_Application
             MessageBox.Show("Загрузка успешна");
         }
         /// <summary>
-        /// Проверка занчения нажатой кнопки
+        /// Проверка значения нажатой кнопки
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -220,7 +186,7 @@ namespace Windows_Application
             e.Handled = !(Char.IsLetter(e.Text, 0));
         }
         /// <summary>
-        /// Проверка занчения нажатой кнопки
+        /// Проверка значения нажатой кнопки
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -230,7 +196,7 @@ namespace Windows_Application
                 e.Handled = true;
         }
         /// <summary>
-        /// Проверка занчения нажатой кнопки
+        /// Проверка значения нажатой кнопки
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -240,7 +206,7 @@ namespace Windows_Application
                 e.Handled = true;
         }
         /// <summary>
-        /// Проверка занчения нажатой кнопки
+        /// Проверка значения нажатой кнопки
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

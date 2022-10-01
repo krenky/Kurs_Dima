@@ -125,68 +125,6 @@ namespace Class_library
             }
         }
         /// <summary>
-        /// Добавить до операции
-        /// </summary>
-        /// <param name="amount">Сумма</param>
-        /// <param name="operatiomId">Id операции до которой надо добавить</param>
-        /// <returns>True - успешное добавление, False - неуспешное</returns>
-        public bool AddBeforeOperation(int amount, int operatiomId)
-        {
-            var newOperation = new Operation(amount);
-            var current = GetOperation(operatiomId);
-
-            if (firstOperation == null)
-            {
-                firstOperation = newOperation;
-                firstOperation.Next = firstOperation;
-                firstOperation.Previous = firstOperation;
-                operations = GetEnumerator() as ObservableCollection<Operation>;
-                return true;
-            }
-
-            if (current != null)
-            {
-                newOperation.Next = current;
-                newOperation.Previous = current.Previous;
-                current.Previous.Next = newOperation;
-                current.Previous = newOperation;
-                operations = new ObservableCollection<Operation>(this);
-                return true;
-            }
-            return false;
-        }
-        /// <summary>
-        /// Добавить после операции
-        /// </summary>
-        /// <param name="amount">Сумма</param>
-        /// <param name="operatiomId">Id операции после которой надо добавить</param>
-        /// <returns>True - успешное добавление, False - неуспешное</returns>
-        public bool AddAfterOperation(int amount, int operatiomId)
-        {
-            var newOperation = new Operation(amount);
-            var current = GetOperation(operatiomId);
-
-            if (firstOperation == null)
-            {
-                firstOperation = newOperation;
-                firstOperation.Next = firstOperation;
-                firstOperation.Previous = firstOperation;
-                operations = new ObservableCollection<Operation>(this);
-                return true;
-            }
-
-            if (current != null)
-            {
-                newOperation.Next = current.Next;
-                newOperation.Previous = current;
-                current.Next.Previous = newOperation;
-                current.Next = newOperation;
-                operations = new ObservableCollection<Operation>(this);
-                return true;
-            }
-            return false;
-        }
-        /// <summary>
         /// Изменить сумму операции
         /// </summary>
         /// <param name="operationId">Id операции которую надо изменить</param>
@@ -199,33 +137,19 @@ namespace Class_library
                 return false;
             do
             {
+                currentOperation = currentOperation.Next;
                 if (operationId == currentOperation.OperationId)
                 {
                     currentOperation.Amount = amount;
+                    currentOperation.DateOperation = DateTime.Now;
+                    currentOperation.Previous.Next = currentOperation.Next;
+                    currentOperation.Next.Previous = currentOperation.Previous;
+                    operations.Remove(currentOperation);
+                    AddOperation(currentOperation);
                     return true;
                 }
             } while (currentOperation != firstOperation);
             return false;
-        }
-        /// <summary>
-        /// Получить операцию
-        /// </summary>
-        /// <param name="operationId">Id операции</param>
-        /// <returns></returns>
-        private Operation GetOperation(int operationId)
-        {
-            var currentOperation = firstOperation;
-            if (currentOperation == null)
-                return null;
-            do
-            {
-                if (operationId == currentOperation.OperationId)
-                {
-                    return currentOperation;
-                }
-                currentOperation = currentOperation.Next;
-            } while (currentOperation != firstOperation);
-            return null;
         }
         /// <summary>
         /// реализация интерфейса ienumerator
